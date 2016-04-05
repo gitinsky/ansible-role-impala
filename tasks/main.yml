@@ -1,0 +1,60 @@
+---
+- name: install build prerequisites
+  apt: name={{ item }} state=present
+  with_items:
+    - git
+    - build-essential
+    - cmake
+    - bison
+    - flex
+    - pkg-config
+    - libsasl2-dev
+    - autoconf
+    - automake
+    - libtool
+    - maven
+    - subversion
+    - doxygen
+    - libbz2-dev
+    - zlib1g-dev
+    - python-pip
+    - python-setuptools
+    - python-dev
+    - libssl-dev
+    - libboost-all-dev
+    - postgresql
+    - liblzo2-dev
+    - lzop
+    - llvm-3.3
+
+- name: install pips
+  pip: name={{ item }} state=present
+  with_items:
+    - allpairs
+    - pytest
+    - pytest-xdist
+    - paramiko
+    - texttable
+    - prettytable
+    - sqlparse
+    - psutil==0.7.1
+    - pywebhdfs
+    - gitpython
+    - jenkinsapi
+
+- name: link .so Boost libraries
+  file: state=link src=/usr/lib/x86_64-linux-gnu/{{ item }}.so dest=/usr/lib/x86_64-linux-gnu/{{ item }}-mt.so
+  with_items:
+    - libboost_filesystem
+    - libboost_system
+    - libboost_regex
+
+- name: link .a Boost libraries
+  file: state=link src=/usr/lib/x86_64-linux-gnu/{{ item }}.a dest=/usr/lib/x86_64-linux-gnu/{{ item }}-mt.a
+  with_items:
+    - libboost_filesystem
+    - libboost_system
+    - libboost_regex
+
+- name: checkout Impala
+  git: repo=https://github.com/cloudera/Impala.git dest=/root/Impala accept_hostkey=yes
